@@ -22,7 +22,7 @@ A native macOS 26 (Tahoe) app that turns speech into text **entirely on your dev
 
 ## Install
 
-Grab the latest **`mw-x.y.z.dmg`** from [Releases](https://github.com/mc-c0rp/mw/releases), open it, and drag **mw.app** into **Applications**. On first launch the speech model is downloaded automatically.
+Download the latest **`.dmg`** from the [latest release](https://github.com/mc-c0rp/mw/releases/latest) (e.g. `mw-1.0.0.dmg`), open it, and drag **mw.app** into **Applications**. On first launch the speech model is downloaded automatically.
 
 > Not notarized (no paid Apple Developer account yet): on first run, right‑click the app → **Open** to get past Gatekeeper.
 
