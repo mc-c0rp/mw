@@ -2,7 +2,7 @@
 
 A native macOS 26 (Tahoe) app that turns speech into text **entirely on your device** (whisper.cpp + Metal). It lives in the menu bar: press a hotkey → a Liquid Glass capsule slides up from the bottom of the screen with a live frequency waveform → speak → press again to transcribe and copy to the clipboard (or type it straight into the focused field). Nothing ever leaves your machine.
 
-> Apple Silicon · macOS 26+ · SwiftUI + Liquid Glass
+> Powered by [Whisper](https://github.com/ggml-org/whisper.cpp) (whisper.cpp + Metal) · Apple Silicon · macOS 26+ · SwiftUI + Liquid Glass
 
 🇷🇺 [Русская версия →](README.ru.md)
 

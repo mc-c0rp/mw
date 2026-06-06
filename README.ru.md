@@ -2,7 +2,7 @@
 
 Нативное приложение для macOS 26 (Tahoe), которое превращает речь в текст **полностью на устройстве** (whisper.cpp + Metal). Живёт в меню‑баре: нажал горячую клавишу → снизу выезжает стеклянная капсула с живой диаграммой частот → говоришь → повторное нажатие распознаёт и кладёт текст в буфер (или печатает). Ничего не уходит в сеть.
 
-> Apple Silicon · macOS 26+ · SwiftUI + Liquid Glass
+> На базе [Whisper](https://github.com/ggml-org/whisper.cpp) (whisper.cpp + Metal) · Apple Silicon · macOS 26+ · SwiftUI + Liquid Glass
 
 🇬🇧 [English version →](README.md)
 
