@@ -35,6 +35,17 @@ enum WindowID {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Single instance: a freshly launched copy replaces any older one that's
+        // still running, so two instances never run at the same time.
+        let current = NSRunningApplication.current
+        let bundleID = Bundle.main.bundleIdentifier ?? ""
+        let others = NSRunningApplication
+            .runningApplications(withBundleIdentifier: bundleID)
+            .filter { $0.processIdentifier != current.processIdentifier }
+        for app in others { app.terminate() }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         DictationController.shared.start()
