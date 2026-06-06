@@ -61,6 +61,10 @@ open mw.xcodeproj             # ⌘R в Xcode
 
 Движок — [whisper.cpp](https://github.com/ggml-org/whisper.cpp) как готовый XCFramework с Metal. Модели — [ggerganov/whisper.cpp на HuggingFace](https://huggingface.co/ggerganov/whisper.cpp).
 
+## Сделано с
+
+Спроектировано и собрано с помощью [Claude Opus 4.8](https://claude.com/claude-code) — Claude Code от Anthropic.
+
 ## Лицензия
 
 [MIT](LICENSE) © 2026 mc-c0rp

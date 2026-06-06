@@ -61,6 +61,10 @@ The app is not sandboxed (required for CGEvent/Accessibility) and is signed with
 
 The engine is [whisper.cpp](https://github.com/ggml-org/whisper.cpp) shipped as a prebuilt Metal XCFramework. Models come from [ggerganov/whisper.cpp on Hugging Face](https://huggingface.co/ggerganov/whisper.cpp).
 
+## Built with
+
+Designed and built with [Claude Opus 4.8](https://claude.com/claude-code) — Anthropic's Claude Code.
+
 ## License
 
 [MIT](LICENSE) © 2026 mc-c0rp
