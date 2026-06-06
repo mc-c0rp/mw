@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+
+# Xcode / build
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.moved-aside
+*.hmap
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# Large binary dependency — re-fetched via scripts/bootstrap.sh
+Frameworks/whisper.xcframework/
+
+# Whisper models — downloaded by the app at runtime (Application Support)
+*.bin
+
+# Sparkle signing — NEVER commit the private key
+*_eddsa_priv*
+sparkle_private*
+dsa_priv.pem
+
+# Release artifacts
+dist/
+*.zip
+
+# Misc
+/tmp/
+
+# Claude Code local data
+.claude/
