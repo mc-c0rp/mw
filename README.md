@@ -1,67 +1,66 @@
-# mw — локальная диктовка голосом для macOS
+# mw — local, on-device voice dictation for macOS
 
-Нативное приложение для macOS 26 (Tahoe), которое превращает речь в текст **полностью на устройстве** (whisper.cpp + Metal). Живёт в меню‑баре: нажал горячую клавишу → снизу выезжает стеклянная капсула с живой диаграммой частот → говоришь → повторное нажатие распознаёт и кладёт текст в буфер (или печатает). Ничего не уходит в сеть.
+A native macOS 26 (Tahoe) app that turns speech into text **entirely on your device** (whisper.cpp + Metal). It lives in the menu bar: press a hotkey → a Liquid Glass capsule slides up from the bottom of the screen with a live frequency waveform → speak → press again to transcribe and copy to the clipboard (or type it straight into the focused field). Nothing ever leaves your machine.
 
 > Apple Silicon · macOS 26+ · SwiftUI + Liquid Glass
 
-## Возможности
+🇷🇺 [Русская версия →](README.ru.md)
 
-- 🎙 **Глобальная горячая клавиша** (по умолчанию ⌃⌥Space, переназначаемая) — работает из любого приложения.
-- 🌊 **Liquid Glass оверлей** снизу экрана с реальной FFT‑визуализацией частот и кнопкой‑стоп; не забирает фокус, поэтому текст вставляется в ваше активное поле.
-- 🗣 **Мультиязычность** — ru / ro / en (и др.), с распознаванием английских слов внутри русской/румынской речи. Язык: Авто или фиксированный.
-- 📋 **Вывод** на выбор: в буфер обмена, авто‑печать (⌘V) в активное приложение, или и то и другое. Опция «Enter после вставки».
-- 🧠 **Две модели на выбор** (скачиваются при первом запуске):
-  - **Large‑v3 Turbo** (~574 МБ) — быстрая, меньше RAM. По умолчанию.
-  - **Large‑v3 полная** (~1.08 ГБ) — максимальная точность, медленнее.
-- ⚡️ **Умная загрузка модели**: грузится в память на старте, выгружается по простою (настраиваемо, по умолчанию 10 мин); если выгружена — запись стартует сразу, модель догружается параллельно.
-- 🖼 **Иконки macOS 26**: Liquid Glass иконка приложения (адаптируется под светлую/тёмную/тонированную темы) и монохромная template‑иконка в меню‑баре.
-- 🚀 **Запуск при входе в систему** (через `SMAppService`).
+## Features
 
-## Требования
+- 🎙 **Global hotkey** (default ⌃⌥Space, rebindable) — works from any app.
+- 🌊 **Liquid Glass overlay** at the bottom of the screen with a real FFT frequency visualizer and a stop button; it never steals focus, so the text lands in your active field.
+- 🗣 **Multilingual** — ru / ro / en (and more), including English words inside Russian/Romanian speech. Language: Auto or fixed.
+- 📋 **Output modes**: clipboard, auto-paste (⌘V) into the active app, or both. Optional "press Return after pasting".
+- 🧠 **Two selectable models** (downloaded on first launch):
+  - **Large-v3 Turbo** (~574 MB) — fast, lower RAM. Default.
+  - **Large-v3 full** (~1.08 GB) — maximum accuracy, slower.
+- ⚡️ **Smart model lifecycle**: loaded into memory on launch, unloaded after an idle timeout (configurable, default 10 min); if unloaded, recording starts immediately while the model loads in parallel.
+- 🖼 **macOS 26 icons**: a Liquid Glass app icon (adapts to light/dark/tinted appearances) and a monochrome template menu-bar icon.
+- 🚀 **Launch at login** (via `SMAppService`).
+- 🔄 **Auto-updates** via [Sparkle](https://sparkle-project.org).
 
-- macOS 26 (Tahoe) или новее
+## Requirements
+
+- macOS 26 (Tahoe) or later
 - Apple Silicon (M1–M4)
-- Xcode 26+ (для сборки из исходников)
+- Xcode 26+ (to build from source)
 
-## Сборка из исходников
+## Build from source
 
 ```bash
 git clone https://github.com/mc-c0rp/mw.git
 cd mw
-./scripts/bootstrap.sh        # докачивает whisper.xcframework (Metal)
-open mw.xcodeproj             # ⌘R в Xcode
+./scripts/bootstrap.sh        # fetches whisper.xcframework (Metal-enabled)
+open mw.xcodeproj             # ⌘R in Xcode
 ```
 
-Модель распознавания (~574 МБ) **не лежит в репозитории** — приложение скачивает её при первом запуске в `~/Library/Application Support/mw/Models/`.
+The speech model (~574 MB) is **not stored in the repo** — the app downloads it on first launch into `~/Library/Application Support/mw/Models/`.
 
-## Разрешения macOS
+## macOS permissions
 
-- **Микрофон** — запрашивается при первой записи.
-- **Универсальный доступ (Accessibility)** — только если включена авто‑печать/«оба» (для синтетического ⌘V). Для режима «только буфер» не нужен.
+- **Microphone** — requested on first recording.
+- **Accessibility** — only needed for auto-paste / "both" output (synthetic ⌘V). Not required for clipboard-only mode.
 
-Приложение не в песочнице (нужно для CGEvent/Accessibility), подписано Developer ID + hardened runtime.
+The app is not sandboxed (required for CGEvent/Accessibility) and is signed with hardened runtime.
 
-## Как это устроено
+## How it works
 
-| Компонент | Файл |
+| Component | File |
 |---|---|
-| Состояние и оркестрация | `mw/DictationController.swift` |
-| Движок whisper.cpp (actor, Metal) | `mw/WhisperEngine.swift` |
-| Скачивание/выбор модели | `mw/ModelManager.swift` |
-| Захват микрофона + ресемплинг 16кГц | `mw/AudioCaptureEngine.swift` |
-| FFT‑полоски (Accelerate) | `mw/FFTProcessor.swift` |
-| Глобальный хоткей (Carbon) | `mw/HotKeyManager.swift` |
-| Плавающая панель (NSPanel) | `mw/FloatingPanel.swift` |
-| Капсула‑оверлей (Liquid Glass) | `mw/OverlayView.swift` |
-| Вывод текста (буфер / ⌘V / Enter) | `mw/TextOutput.swift` |
-| Окно с вкладками (настройки) | `mw/SettingsView.swift` |
+| State & orchestration | `mw/DictationController.swift` |
+| whisper.cpp engine (actor, Metal) | `mw/WhisperEngine.swift` |
+| Model download / selection | `mw/ModelManager.swift` |
+| Mic capture + 16 kHz resampling | `mw/AudioCaptureEngine.swift` |
+| FFT bars (Accelerate) | `mw/FFTProcessor.swift` |
+| Global hotkey (Carbon) | `mw/HotKeyManager.swift` |
+| Floating panel (NSPanel) | `mw/FloatingPanel.swift` |
+| Capsule overlay (Liquid Glass) | `mw/OverlayView.swift` |
+| Text output (clipboard / ⌘V / Return) | `mw/TextOutput.swift` |
+| Tabbed settings window | `mw/SettingsView.swift` |
 
-Движок — [whisper.cpp](https://github.com/ggml-org/whisper.cpp) как готовый XCFramework с Metal. Модели — [ggerganov/whisper.cpp на HuggingFace](https://huggingface.co/ggerganov/whisper.cpp).
+The engine is [whisper.cpp](https://github.com/ggml-org/whisper.cpp) shipped as a prebuilt Metal XCFramework. Models come from [ggerganov/whisper.cpp on Hugging Face](https://huggingface.co/ggerganov/whisper.cpp).
 
-## Обновления
+## License
 
-Авто‑обновления через [Sparkle](https://sparkle-project.org) (подписанный appcast, обновления прямо из приложения). См. релизы.
-
-## Лицензия
-
-© 2026 mc-c0rp. Все права защищены (лицензия может быть добавлена позже).
+[MIT](LICENSE) © 2026 mc-c0rp
