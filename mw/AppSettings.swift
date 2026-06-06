@@ -18,9 +18,9 @@ enum OutputMode: String, CaseIterable, Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .clipboard: "Копировать в буфер"
-        case .type:      "Печатать на клавиатуре"
-        case .both:      "И то, и другое"
+        case .clipboard: L.s("Copy to clipboard", "Копировать в буфер", "Copiază în clipboard")
+        case .type:      L.s("Type on keyboard", "Печатать на клавиатуре", "Tastează la tastatură")
+        case .both:      L.s("Both", "И то, и другое", "Ambele")
         }
     }
 
@@ -47,7 +47,7 @@ enum TranscriptionLanguage: String, CaseIterable, Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .auto: "Авто"
+        case .auto: L.s("Auto", "Авто", "Auto")
         case .ru:   "Русский"
         case .ro:   "Română"
         case .en:   "English"
@@ -94,6 +94,20 @@ final class AppSettings {
         didSet { defaults.set(model.rawValue, forKey: Keys.model) }
     }
 
+    /// Interface language (`.system` follows macOS).
+    var uiLanguage: UILanguage {
+        didSet { defaults.set(uiLanguage.rawValue, forKey: Keys.uiLanguage) }
+    }
+
+    /// `.system` resolved to en/ru/ro (English fallback).
+    var effectiveLanguage: UILanguage {
+        guard uiLanguage == .system else { return uiLanguage }
+        let preferred = Locale.preferredLanguages.first ?? "en"
+        if preferred.hasPrefix("ru") { return .ru }
+        if preferred.hasPrefix("ro") { return .ro }
+        return .en
+    }
+
     private let defaults = UserDefaults.standard
 
     private enum Keys {
@@ -103,6 +117,7 @@ final class AppSettings {
         static let hotKey = "hotKey"
         static let autoReturn = "autoReturn"
         static let model = "model"
+        static let uiLanguage = "uiLanguage"
     }
 
     private init() {
@@ -119,5 +134,6 @@ final class AppSettings {
 
         autoReturn = defaults.bool(forKey: Keys.autoReturn)
         model = WhisperModel(rawValue: defaults.string(forKey: Keys.model) ?? "") ?? .turbo
+        uiLanguage = UILanguage(rawValue: defaults.string(forKey: Keys.uiLanguage) ?? "") ?? .system
     }
 }

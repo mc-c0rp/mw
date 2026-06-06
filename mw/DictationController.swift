@@ -123,7 +123,7 @@ final class DictationController {
             guard state == .recording else { return }
             guard granted else {
                 state = .idle
-                showResult("Нет доступа к микрофону", phase: .done)
+                showResult(L.s("No microphone access", "Нет доступа к микрофону", "Fără acces la microfon"), phase: .done)
                 return
             }
             do {
@@ -131,7 +131,7 @@ final class DictationController {
                 startVisualizer()
             } catch {
                 state = .idle
-                showResult("Ошибка микрофона", phase: .done)
+                showResult(L.s("Microphone error", "Ошибка микрофона", "Eroare de microfon"), phase: .done)
             }
         }
     }
@@ -142,7 +142,7 @@ final class DictationController {
         let samples = audio.stop()
 
         overlay.phase = .transcribing
-        overlay.statusText = "Распознаю…"
+        overlay.statusText = L.s("Transcribing…", "Распознаю…", "Transcriere…")
 
         Task { @MainActor in
             do {
@@ -154,13 +154,13 @@ final class DictationController {
                 )
                 let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
                 if trimmed.isEmpty {
-                    overlay.statusText = "Ничего не распознано"
+                    overlay.statusText = L.s("Nothing recognized", "Ничего не распознано", "Nimic recunoscut")
                 } else {
                     let result = TextOutput.deliver(trimmed, mode: settings.outputMode, autoReturn: settings.autoReturn)
                     overlay.statusText = statusText(for: result)
                 }
             } catch {
-                overlay.statusText = "Ошибка распознавания"
+                overlay.statusText = L.s("Recognition error", "Ошибка распознавания", "Eroare de recunoaștere")
             }
             overlay.phase = .done
             state = .idle
@@ -180,7 +180,9 @@ final class DictationController {
             guard state == .preparing else { return }
             state = .idle
             overlay.phase = .done
-            overlay.statusText = ok ? "Модель готова — нажмите ещё раз" : "Не удалось скачать модель"
+            overlay.statusText = ok
+                ? L.s("Model ready — press again", "Модель готова — нажмите ещё раз", "Model gata — apasă din nou")
+                : L.s("Couldn't download the model", "Не удалось скачать модель", "Descărcarea modelului a eșuat")
             autoHide(after: ok ? 2.2 : 3.0)
             if ok { scheduleLoad() }
         }
@@ -206,9 +208,14 @@ final class DictationController {
 
     private func statusText(for result: TextOutput.Result) -> String {
         switch result {
-        case .copied:            "Скопировано в буфер"
-        case .pasted:            settings.outputMode == .both ? "Вставлено и скопировано" : "Вставлено"
-        case .needsAccessibility: "Скопировано · нужен Универсальный доступ"
+        case .copied:
+            return L.s("Copied to clipboard", "Скопировано в буфер", "Copiat în clipboard")
+        case .pasted:
+            return settings.outputMode == .both
+                ? L.s("Pasted and copied", "Вставлено и скопировано", "Lipit și copiat")
+                : L.s("Pasted", "Вставлено", "Lipit")
+        case .needsAccessibility:
+            return L.s("Copied · needs Accessibility", "Скопировано · нужен Универсальный доступ", "Copiat · necesită Accesibilitate")
         }
     }
 

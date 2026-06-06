@@ -57,7 +57,9 @@ private struct MenuContent: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Button(controller.isRecording ? "Остановить запись" : "Начать запись") {
+        Button(controller.isRecording
+               ? L.s("Stop recording", "Остановить запись", "Oprește înregistrarea")
+               : L.s("Start recording", "Начать запись", "Începe înregistrarea")) {
             controller.toggle()
         }
         .keyboardShortcut("r")
@@ -66,14 +68,14 @@ private struct MenuContent: View {
 
         Divider()
 
-        Button("Открыть mw…") {
+        Button(L.s("Open mw…", "Открыть mw…", "Deschide mw…")) {
             NSApp.setActivationPolicy(.regular)
             NSApp.activate()
             openWindow(id: WindowID.main)
         }
         .keyboardShortcut(",")
 
-        Button("Выход") {
+        Button(L.s("Quit", "Выход", "Ieșire")) {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")

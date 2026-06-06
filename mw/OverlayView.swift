@@ -163,6 +163,6 @@ struct StopButton: View {
         }
         .buttonStyle(.plain)
         .contentShape(Circle())
-        .help("Остановить и распознать")
+        .help(L.s("Stop and transcribe", "Остановить и распознать", "Oprește și transcrie"))
     }
 }

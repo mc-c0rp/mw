@@ -49,13 +49,6 @@ nonisolated enum WhisperModel: String, CaseIterable, Identifiable, Codable, Send
         }
     }
 
-    var detail: String {
-        switch self {
-        case .turbo: "Быстрее, меньше RAM (~0.7–1 ГБ). Отличная точность для диктовки ru/ro/en. Рекомендуется."
-        case .full:  "Максимальная точность (сложная речь, акценты, code-switching), но медленнее и больше RAM (~1.5–2 ГБ)."
-        }
-    }
-
     func fileURL() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return base
@@ -102,11 +95,17 @@ final class ModelManager {
     }
 
     var statusLine: String {
+        let name = selected.displayName
         switch state {
-        case .missing:             "\(selected.displayName) — не загружена"
-        case .downloading(let p):  "Загрузка \(selected.displayName)… \(Int(p * 100))%"
-        case .ready:               "\(selected.displayName) — готова"
-        case .failed(let message): "Ошибка загрузки: \(message)"
+        case .missing:
+            return L.s("\(name) — not downloaded", "\(name) — не загружена", "\(name) — nedescărcat")
+        case .downloading(let p):
+            let pct = Int(p * 100)
+            return L.s("Downloading \(name)… \(pct)%", "Загрузка \(name)… \(pct)%", "Se descarcă \(name)… \(pct)%")
+        case .ready:
+            return L.s("\(name) — ready", "\(name) — готова", "\(name) — gata")
+        case .failed(let message):
+            return L.s("Download error: \(message)", "Ошибка загрузки: \(message)", "Eroare la descărcare: \(message)")
         }
     }
 
