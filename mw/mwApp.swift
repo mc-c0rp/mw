@@ -2,8 +2,8 @@
 //  mwApp.swift
 //  mw
 //
-//  Menu-bar accessory app (no Dock icon). The dictation overlay lives in its
-//  own floating panel; the main settings window uses tabs.
+//  Menu-bar accessory app (no Dock icon by default). The dictation overlay lives
+//  in its own floating panel; the main window is AppKit-managed (AppWindow).
 //
 
 import SwiftUI
@@ -19,19 +19,9 @@ struct mwApp: App {
         } label: {
             Image("MenuBarIcon")
                 .renderingMode(.template)
-                .accessibilityLabel("mw — диктовка голосом")
+                .accessibilityLabel(L.s("mw — voice dictation", "mw — диктовка голосом", "mw — dictare vocală"))
         }
-
-        Window("mw", id: WindowID.main) {
-            MainWindowView()
-        }
-        .windowResizability(.contentSize)
-        .defaultLaunchBehavior(.suppressed)
     }
-}
-
-enum WindowID {
-    static let main = "main"
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -49,12 +39,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         DictationController.shared.start()
+
+        // First launch (model not downloaded yet): open the window so the user
+        // can see the model downloading. Deferred so SwiftUI scene setup doesn't
+        // reset the activation policy afterwards.
+        if !DictationController.shared.modelManager.isReady {
+            DispatchQueue.main.async {
+                AppWindow.shared.show()
+            }
+        }
     }
 }
 
 private struct MenuContent: View {
     @Bindable var controller: DictationController
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Button(controller.isRecording
@@ -69,9 +67,7 @@ private struct MenuContent: View {
         Divider()
 
         Button(L.s("Open mw…", "Открыть mw…", "Deschide mw…")) {
-            NSApp.setActivationPolicy(.regular)
-            NSApp.activate()
-            openWindow(id: WindowID.main)
+            AppWindow.shared.show()
         }
         .keyboardShortcut(",")
 

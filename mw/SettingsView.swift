@@ -26,17 +26,6 @@ struct MainWindowView: View {
         .background(BackgroundGradient())
         .preferredColorScheme(.dark)
         .tint(.white)
-        .onAppear {
-            // While the window is open, behave like a normal app: a Dock icon
-            // and a real key window (so it can't get lost and the hotkey
-            // recorder receives key events).
-            NSApp.setActivationPolicy(.regular)
-            NSApp.activate()
-        }
-        .onDisappear {
-            // Back to a pure menu-bar accessory when the window closes.
-            NSApp.setActivationPolicy(.accessory)
-        }
     }
 }
 
